@@ -1,4 +1,4 @@
-#include <stdio.h>
+/*#include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -6,6 +6,8 @@
 #include <fcntl.h>
 #include <string.h>
 #include <arpa/inet.h>
+*/
+#include "../include/my.h"
 
 int my_strlen(char const *str)
 {
@@ -56,7 +58,16 @@ int convert(u_int32_t num)
     
 
 }
-//print numbers big endian
+
+void bin(unsigned n)
+{
+    unsigned i;
+    for (i = 1 << 31; i > 0; i = i / 2)
+	    (n & i)? printf("1"): printf("0");
+    printf("\n");
+}
+//print numbers big endian:wq
+//
 int boot(char *buf, size_t size)
 {
     //256 is size/4;
@@ -65,11 +76,20 @@ int boot(char *buf, size_t size)
 
     for (int i = 0; i < 256; ++i) {
         memcpy(&a[i], buf, 4);
+	a[i] = htonl(a[i]);
         buf += 4;
+	bin(a[i]);
+	
+	printf("%u\n", a[i]);
+
+
+
+
+	 
     }
-    for (int i = 0; i < 256; ++i) {
-        printf("%u\n", htonl(a[i]));
-    }    
+    //for (int i = 0; i < 256; ++i) {
+    //    printf("%u\n", htonl(a[i]));
+    //}    
     return (0);
 }
 
