@@ -1,0 +1,129 @@
+#!/usr/bin/env python3
+
+import sys
+import math
+import os
+import random
+
+def identity_matrix(n):
+    mat_arr = []
+    for i in range(n):
+        arr = []
+        for j in range(n):
+            arr.append(1 if j == i else 0)
+        mat_arr.append(arr)
+    return mat_arr
+
+def matrix_mult(matrix1, matrix2):
+    mat_arr = []
+    for i in range(len(matrix1)):
+        arr = []
+        for j in range(len(matrix2[0])):
+            a = 0
+            for k in range(len(matrix1[0])):
+                a += matrix1[i][k] * matrix2[k][j]
+            arr.append(a)
+        mat_arr.append(arr)
+    return mat_arr
+
+def pow_matrix(matrix, n):
+    mat_arr = matrix
+    for i in range(n - 1):
+        mat_arr = matrix_mult(mat_arr, matrix)
+    return mat_arr
+
+
+def div_matrix(matrix, k):
+    for i in range(len(matrix)):
+        for j in range(len(matrix[0])):
+            matrix[i][j] /= k
+    return matrix
+
+
+def add_matrix(matrix1, matrix2):
+    mat_arr = []
+    for i in range(len(matrix1)):
+        arr = []
+        for j in range(len(matrix1[0])):
+            arr.append(matrix1[i][j] + matrix2[i][j])
+        mat_arr.append(arr)
+    return mat_arr
+
+
+def sub_matrix(matrix1, matrix2):
+    mat_arr = []
+    for i in range(len(matrix1)):
+        arr = []
+        for j in range(len(matrix1[0])):
+            arr.append(matrix1[i][j] - matrix2[i][j])
+        mat_arr.append(arr)
+    return mat_arr
+
+def my_exp(tab):
+    mat_arr = identity_matrix(len(tab))
+    for i in range(1, 18):
+        mat_arr = add_matrix(mat_arr, div_matrix(pow_matrix(tab, i), math.factorial(i)))
+    return mat_arr
+
+def my_cos(tab):
+    mat_arr = identity_matrix(len(tab))
+    for i in range(1, 17):
+        if i % 2 == 0:
+            mat_arr = add_matrix(mat_arr, div_matrix(pow_matrix(tab, 2 * i), math.factorial(2 * i)))
+        else:
+            mat_arr = sub_matrix(mat_arr, div_matrix(pow_matrix(tab, 2 * i), math.factorial(2 * i)))
+    return mat_arr
+
+def my_sin(tab):
+    mat_arr = tab
+    for i in range(1, 17):
+        if i % 2 == 0:
+            mat_arr = add_matrix(mat_arr, div_matrix(pow_matrix(tab, 2 * i + 1), math.factorial(2 * i + 1)))
+        else:
+            mat_arr = sub_matrix(mat_arr, div_matrix(pow_matrix(tab, 2 * i + 1), math.factorial(2 * i + 1)))
+    return mat_arr
+
+def usage():
+    print("USAGE")
+    print("\t./108trigo fun a0 a1 a2 ...")
+    print("DESCRIPTION")
+    print("\tfum\tfunction to be applied, among at least “EXP”, “COS”, “SIN”, “COSH”and “SINH”")
+    print("\tai\tcoeficients of the matrix")
+
+def error_handling():
+    if len(sys.argv) <= 2 or sys.argv[1] not in ["EXP", "COS", "SIN", "COSH", "SINH"]:
+        exit(84)
+    try:
+        for i in range(2, len(sys.argv)):
+            sys.argv[i] = float(sys.argv[i])
+    except ValueError:
+        exit(84)
+
+def launch_func(tab):
+    args = ["EXP", "COS", "SIN", "COSH", "SINH"]
+    my_tab = [my_exp, my_cos, my_sin]
+    for i in range(len(my_tab)):
+        if sys.argv[1] == args[i]:
+            tab = my_tab[i](tab)
+    return tab
+
+def print_matrix(tab):
+    for i in range(len(tab)):
+        for j in range(len(tab[i])):
+            print("%.2f%c" % (tab[i][j], '\t' if (j != len(tab[i]) - 1) else '\n'), end="")
+
+if (len(sys.argv) == 2 and sys.argv[1] == "-h"):
+    usage()
+    exit(0)
+tab = []
+error_handling()
+i = len(sys.argv) - 2
+arr = math.trunc(math.sqrt(i))
+if math.trunc(math.sqrt(i)) ** 2 != i:
+    exit(84)
+for i in range(int(arr)):
+    tab.append([])
+    for j in range(int(arr)):
+        tab[i].append(sys.argv[i * int(arr) + j + 2])
+tab = launch_func(tab)
+print_matrix(tab)
