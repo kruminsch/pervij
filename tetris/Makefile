@@ -8,6 +8,7 @@
 NAME    =	tetris
 
 SRC     =	./src/main.c			\
+		./src/disp.c
 
 OBJ	=	$(SRC:.c=.o)
 

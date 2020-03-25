@@ -18,4 +18,20 @@
 #include <string.h>
 #include <getopt.h>
 
+struct opt {
+	int level;
+	int left;
+	int right;
+	int turn;
+	int drop;
+	int quit;
+	int pause;
+	int x;
+	int y;
+	int hide_next;
+	int debug;
+};
+typedef struct opt opt_t;
+int disp(opt_t options);
+
 #endif /* !MY_H */
